@@ -7,6 +7,7 @@ import mx.itson.devops.descuento.Descuento;
 import mx.itson.devops.descuento.Descuento;
 import mx.itson.devops.descuento.Descuento;
 import mx.itson.devops.descuento.Descuento;
+import mx.itson.devops.descuento.Descuento;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
