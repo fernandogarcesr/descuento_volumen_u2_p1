@@ -44,12 +44,22 @@
           <!-- Cero pruebas ejecutadas NO cuenta como exito -->
           <failIfNoTests>true</failIfNoTests>
         </configuration>
-      </plugin>
+      </plugin> 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.5.1</version>
+        <configuration>
+            <archive>
+                <manifest>
+                    <mainClass>
+                        mx.itson.devops.descuento.Main
+                    </mainClass>
+                </manifest>
+            </archive>
+        </configuration>
       </plugin>
+      
     </plugins>
   </build>
 </project>

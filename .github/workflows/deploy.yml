@@ -1,0 +1,61 @@
+name: Deploy a Lambda (imagen)
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: us-east-2
+  ECR_REPOSITORY: descuento-volumen
+  FUNCTION_NAME: descuento-docker
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Credenciales de AWS
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login a ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Construir (con pruebas) y subir la imagen
+        run: |
+          SHA=${GITHUB_SHA::7}
+          IMAGE=${{ steps.ecr.outputs.registry }}/$ECR_REPOSITORY:$SHA
+          docker buildx build --platform linux/amd64 --provenance=false \
+            --build-arg APP_VERSION=$SHA --load -t $IMAGE .
+          docker push $IMAGE
+          echo "SHA=$SHA" >> $GITHUB_ENV
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+
+      - name: Actualizar la funcion
+        id: update
+        run: |
+          if aws lambda get-function --function-name $FUNCTION_NAME > /dev/null 2>&1; then
+            aws lambda update-function-code --function-name $FUNCTION_NAME --image-uri $IMAGE
+            aws lambda wait function-updated --function-name $FUNCTION_NAME
+            echo "existe=true" >> $GITHUB_OUTPUT
+          else
+            echo "::warning::La funcion $FUNCTION_NAME no existe, creala desde la imagen y haz Re-run"
+            echo "existe=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Smoke test
+        if: steps.update.outputs.existe == 'true'
+        run: |
+          aws lambda invoke --function-name $FUNCTION_NAME \
+            --cli-binary-format raw-in-base64-out \
+            --payload '{"unidades":150,"precioCentavos":2500}' respuesta.json
+          cat respuesta.json
+          jq -e '.porcentaje == 10' respuesta.json
