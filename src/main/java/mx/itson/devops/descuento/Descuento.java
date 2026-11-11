@@ -3,11 +3,9 @@ package mx.itson.devops.descuento;
 /**
  * Descuento por volumen.
  *
- * REGLA DE NEGOCIO (actualizada esta semana por el area comercial):
- *   - menos de 100 unidades   -> 0 %
- *   - de 100 a 499 unidades   -> 10 %
- *   - DESDE 500 unidades      -> 15 %
- *   - de 1000 a 1999 unidades -> 20 % - DESDE 2000 unidades -> 25 % (Buen
+ * REGLA DE NEGOCIO (actualizada esta semana por el area comercial): - menos de
+ * 100 unidades -> 0 % - de 100 a 499 unidades -> 10 % - DESDE 500 unidades ->
+ * 15 % - de 1000 a 1999 unidades -> 20 % - DESDE 2000 unidades -> 25 % (Buen
  * Fin) - unidades negativas -> IllegalArgumentException - precio unitario
  * <= 0    -> IllegalArgumentException (error de captura)
  */
@@ -16,6 +14,10 @@ public class Descuento {
     public int porcentaje(int unidades) {
         if (unidades < 0) {
             throw new IllegalArgumentException("unidades negativas: " + unidades);
+        }
+
+        if (unidades >= 5000) {
+            return 30;
         }
 
         if (unidades >= 2000) {

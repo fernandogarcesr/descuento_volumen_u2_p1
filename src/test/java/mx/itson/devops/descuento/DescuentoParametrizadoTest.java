@@ -23,17 +23,19 @@ class DescuentoParametrizadoTest {
     @CsvSource({
             "0,    0",
             "99,   0",
-            "100,  10",
-            "499,  10",
-            "500,  15",
-            "999,  15",
-            "1000, 20",
-            "1001, 20",
-            "1999, 20",
-            "2000, 25",
-            "2001, 25"
-            
-         
+        "100,  10",
+        "499,  10",
+        "500,  15",
+        "999,  15",
+        "1000, 20",
+        "1001, 20",
+        "1999, 20",
+        "2000, 25",
+        "2001, 25",
+        "4999, 25",
+        "5000, 30",
+        "5001, 30"
+
     })
     void aplicaElPorcentajeSegunElNivel(int unidades, int porcentajeEsperado) {
         int obtenido = descuento.porcentaje(unidades);
