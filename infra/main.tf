@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.11"
 
   # Estado remoto compartido, con bloqueo nativo de S3.
-  # Cambien <ACCOUNT_ID> y la región por las de su cuenta.
+  # Cambien <ACCOUNT_ID> y la región por las de mi cuenta.
   backend "s3" {
     bucket       = "tfstate-descuento-714000190154"
     key          = "descuento/terraform.tfstate"
@@ -20,7 +20,7 @@ terraform {
 
 # La región la toma de AWS_REGION (CloudShell o configure-aws-credentials).
 provider "aws" {
-  default_tags = {
+  default_tags {
     tags = local.tags
   }
 }
@@ -28,7 +28,7 @@ provider "aws" {
 locals {
   # Un nombre por workspace: descuento-default, descuento-qa, ...
   nombre = "${var.prefijo}-${terraform.workspace}"
-  tags   = {
+  tags = {
     curso    = "devops-2026"
     ambiente = terraform.workspace
   }
@@ -40,7 +40,7 @@ resource "aws_iam_role" "lambda" {
   name = "${local.nombre}-role"
 
   assume_role_policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [{
       Effect    = "Allow"
       Principal = { Service = "lambda.amazonaws.com" }
