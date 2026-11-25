@@ -20,7 +20,7 @@ terraform {
 
 # La región la toma de AWS_REGION (CloudShell o configure-aws-credentials).
 provider "aws" {
-  default_tags {
+  default_tags = {
     tags = local.tags
   }
 }
